@@ -1,27 +1,16 @@
-from datetime import datetime
+from datetime import datetime, timezone
 from pathlib import Path
-import subprocess
+from zoneinfo import ZoneInfo
 
 REPO = Path(__file__).resolve().parent
 ACTIVITY_FILE = REPO / "activity.txt"
 
-now = datetime.now()
+india = ZoneInfo("Asia/Kolkata")
+now = datetime.now(timezone.utc).astimezone(india)
 
 with ACTIVITY_FILE.open("a") as file:
-    file.write(f"\nActivity recorded: {now:%Y-%m-%d %H:%M:%S}")
+    file.write(
+        f"\nActivity recorded: {now:%Y-%m-%d %H:%M:%S} IST"
+    )
 
-subprocess.run(["git", "add", "activity.txt"], cwd=REPO, check=True)
-
-subprocess.run(
-    ["git", "commit", "-m", f"Activity update: {now:%Y-%m-%d %H:%M}"],
-    cwd=REPO,
-    check=True,
-)
-
-subprocess.run(
-    ["git", "push", "origin", "main"],
-    cwd=REPO,
-    check=True,
-)
-
-print("GitHub activity updated successfully!")
+print(f"Activity recorded successfully: {now:%Y-%m-%d %H:%M:%S} IST")

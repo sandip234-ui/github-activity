@@ -1,0 +1,37 @@
+name: GitHub Activity Automation
+
+on:
+  workflow_dispatch:
+
+  schedule:
+    - cron: "30 3 * * *"
+
+permissions:
+  contents: write
+
+jobs:
+  update-activity:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Run activity script
+        run: python activity.py
+
+      - name: Commit and push changes
+        run: |
+          git config user.name "sandip234-ui"
+          git config user.email "sandipbiswal839@gmail.com"
+
+          git add activity.txt
+
+          git commit -m "Daily activity update: $(TZ='Asia/Kolkata' date '+%Y-%m-%d %H:%M')" || exit 0
+
+          git push
